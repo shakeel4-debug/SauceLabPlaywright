@@ -35,6 +35,18 @@ test('Login with valid credentials on sauce demo',async({page})=>{
 
 });
 
+test('Login and logout with sauce demo',async({page})=>{
+
+  await page.goto('https://www.saucedemo.com/');
+  await page.locator("#user-name").type('standard_user');
+  await page.locator('#password').type('secret_sauce');
+  await page.locator('#login-button').click();
+  await page.locator("#react-burger-menu-btn").click();
+  await page.locator('#logout_sidebar_link').click();
+  await expect(page.locator('#login-button')).toBeVisible();
+
+});
+
 
 
 
