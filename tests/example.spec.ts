@@ -1,83 +1,149 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
 
-test('Go to sauce demo and verify the title',async({page})=>{
-  await page.goto('https://www.saucedemo.com/');
-  await expect(page).toHaveTitle('Swag Labs');
+test('Verify title', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.expectTitle('Swag Labs');
 });
 
-test('Go to sauce demo and verify error message in invalid credentials',async({page})=>{
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").type('standard_user');
-  await page.locator('#password').type('secret');
-  await page.locator('#login-button').click();
-  await expect(page.locator("[data-test='error-button']")).toBeVisible();
-
-})
-
-test('Go to sauce demo and verify error message when user do not have data',async({page})=>{
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").click();
-  await page.locator('#password').click();
-  await page.locator('#login-button').click();
-  await expect(page.locator("[data-test='error']")).toBeVisible();
-
-})
-
-
-
-test('Login with valid credentials on sauce demo',async({page})=>{
-
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").type('standard_user');
-  await page.locator('#password').type('secret_sauce');
-  await page.locator('#login-button').click();
-  await expect( page.locator("[data-test='shopping-cart-link']")).toBeVisible;
-
+test('Invalid credentials show error button', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret');
+  await loginPage.expectErrorButtonVisible();
 });
 
-test('Login and logout with sauce demo',async({page})=>{
+test('Empty credentials show error message', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('', '');
+  await loginPage.expectErrorVisible();
+});
 
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").type('standard_user');
-  await page.locator('#password').type('secret_sauce');
-  await page.locator('#login-button').click();
-  await page.locator("#react-burger-menu-btn").click();
-  await page.locator('#logout_sidebar_link').click();
-  await expect(page.locator('#login-button')).toBeVisible();
+test('Login with valid credentials', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const inventoryPage = new InventoryPage(page);
 
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
+  await inventoryPage.expectCartVisible();
+});
+
+test('Login and logout', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const inventoryPage = new InventoryPage(page);
+
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
+  await inventoryPage.logout();
+  await loginPage.loginButton.isVisible();
+});
+
+test('Login and checkout', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const inventoryPage = new InventoryPage(page);
+  const checkoutPage = new CheckoutPage(page);
+
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
+  await inventoryPage.addProduct('sauce-labs-backpack');
+  await inventoryPage.cartLink.click();
+  await checkoutPage.checkout('Ahmed', 'Ali', '72010');
+  await checkoutPage.expectOrderComplete();
 });
 
 
-test('Login and checkout',async({page})=>{
 
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").type('standard_user');
-  await page.locator('#password').type('secret_sauce');
-  await page.locator('#login-button').click();
-  // await expect(page).toHaveURL('inventory');
-  await page.locator('#add-to-cart-sauce-labs-backpack').click();
-  await page.locator("[data-test='shopping-cart-link']").click();
-  await page.locator('#checkout').click();
-  await page.locator('#first-name').type('Ahmed');
-  await page.locator('#last-name').type('Ali');
-  await page.locator('#postal-code').type('72010');
-  await page.locator('#continue').click();
-  await page.locator('#finish').click();
-  await expect(page.locator('#back-to-products')).toBeVisible();
-});
 
-test('Ensures products can be added to the shopping cart.',async({page})=>{
+// test('Go to sauce demo and verify the title',async({page})=>{
+//   await page.goto('https://www.saucedemo.com/');
+//   await expect(page).toHaveTitle('Swag Labs');
+// });
 
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator("#user-name").type('standard_user');
-  await page.locator('#password').type('secret_sauce');
-  await page.locator('#login-button').click();
-  await page.locator('#add-to-cart-sauce-labs-bike-light').click();
-  await page.locator('#add-to-cart-sauce-labs-backpack').click();
+// test('Go to sauce demo and verify error message in invalid credentials',async({page})=>{
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret');
+//   await page.locator('#login-button').click();
+//   await expect(page.locator("[data-test='error-button']")).toBeVisible();
+
+// })
+
+// test('Go to sauce demo and verify error message when user do not have data',async({page})=>{
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").click();
+//   await page.locator('#password').click();
+//   await page.locator('#login-button').click();
+//   await expect(page.locator("[data-test='error']")).toBeVisible();
+
+// })
+
+
+
+// test('Login with valid credentials on sauce demo',async({page})=>{
+
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret_sauce');
+//   await page.locator('#login-button').click();
+//   await expect( page.locator("[data-test='shopping-cart-link']")).toBeVisible;
+
+// });
+
+// test('Login and logout with sauce demo',async({page})=>{
+
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret_sauce');
+//   await page.locator('#login-button').click();
+//   await page.locator("#react-burger-menu-btn").click();
+//   await page.locator('#logout_sidebar_link').click();
+//   await expect(page.locator('#login-button')).toBeVisible();
+
+// });
+
+
+// test('Login and checkout',async({page})=>{
+
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret_sauce');
+//   await page.locator('#login-button').click();
+//   // await expect(page).toHaveURL('inventory');
+//   await page.locator('#add-to-cart-sauce-labs-backpack').click();
+//   await page.locator("[data-test='shopping-cart-link']").click();
+//   await page.locator('#checkout').click();
+//   await page.locator('#first-name').type('Ahmed');
+//   await page.locator('#last-name').type('Ali');
+//   await page.locator('#postal-code').type('72010');
+//   await page.locator('#continue').click();
+//   await page.locator('#finish').click();
+//   await expect(page.locator('#back-to-products')).toBeVisible();
+// });
+
+// test('Ensures products can be added to the shopping cart.',async({page})=>{
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret_sauce');
+//   await page.locator('#login-button').click();
+//   await page.locator('#add-to-cart-sauce-labs-bike-light').click();
+//   await page.locator('#add-to-cart-sauce-labs-backpack').click();
+// });
+
+// test('Ensures products display page',async({page})=>{
+//   await page.goto('https://www.saucedemo.com/');
+//   await page.locator("#user-name").type('standard_user');
+//   await page.locator('#password').type('secret_sauce');
+//   await page.locator('#login-button').click();
   
 
 
-});
+
+// });
+
 
 
 
