@@ -1,0 +1,22 @@
+{
+  "name": "saucedemoplaywright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shakeel4-debug/SauceLabPlaywright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shakeel4-debug/SauceLabPlaywright/issues"
+  },
+  "homepage": "https://github.com/shakeel4-debug/SauceLabPlaywright#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.2.1"
+  }
+}
