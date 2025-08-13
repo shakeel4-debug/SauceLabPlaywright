@@ -48,6 +48,26 @@ test('Login and logout with sauce demo',async({page})=>{
 });
 
 
+test('Login and checkout',async({page})=>{
+
+  await page.goto('https://www.saucedemo.com/');
+  await page.locator("#user-name").type('standard_user');
+  await page.locator('#password').type('secret_sauce');
+  await page.locator('#login-button').click();
+  // await expect(page).toHaveURL('inventory');
+  await page.locator('#add-to-cart-sauce-labs-backpack').click();
+  await page.locator("[data-test='shopping-cart-link']").click();
+  await page.locator('#checkout').click();
+  await page.locator('#first-name').type('Ahmed');
+  await page.locator('#last-name').type('Ali');
+  await page.locator('#postal-code').type('72010');
+  await page.locator('#continue').click();
+  await page.locator('#finish').click();
+  await expect(page.locator('#back-to-products')).toBeVisible();
+});
+
+
+
 
 
 
