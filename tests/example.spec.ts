@@ -66,7 +66,18 @@ test('Login and checkout',async({page})=>{
   await expect(page.locator('#back-to-products')).toBeVisible();
 });
 
+test('Ensures products can be added to the shopping cart.',async({page})=>{
 
+  await page.goto('https://www.saucedemo.com/');
+  await page.locator("#user-name").type('standard_user');
+  await page.locator('#password').type('secret_sauce');
+  await page.locator('#login-button').click();
+  await page.locator('#add-to-cart-sauce-labs-bike-light').click();
+  await page.locator('#add-to-cart-sauce-labs-backpack').click();
+  
+
+
+});
 
 
 
